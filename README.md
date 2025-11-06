@@ -37,6 +37,15 @@
 
 # Hello
 - Native
+    - Borsh
+    - `entrypoint`
+    - `msg`
+    - Build, test, deploy
+    - `cargo build-sbf`
+    - LiteSVM
+    - Script
+        - `solana-test-calidator`
+        - `.so`
 - Anchor
 - TODO: deploy, run Solana script on Anchor programs?
 
@@ -44,11 +53,11 @@
 - Native
 - Anchor
 
-# PDA
+# Piggy bank - PDA
 - Native
 - Anchor
 
-# Token
+# Dutch auction ? - Token
 - CLI
 - Native
 - Anchor
@@ -65,3 +74,4 @@
     - [Installation](https://solana.com/docs/intro/installation)
 - [Anchor](https://github.com/solana-foundation/anchor)
 - [solana-developers/program-examples](https://github.com/solana-developers/program-examples)
+- [crates.io](https://crates.io/)

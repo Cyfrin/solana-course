@@ -6,6 +6,9 @@ use solana_sdk::{
     signature::{Keypair, Signer},
     transaction::Transaction,
 };
+use solana_transaction_status_client_types::{
+    UiTransactionEncoding, option_serializer::OptionSerializer,
+};
 use std::str::FromStr;
 
 fn main() {
@@ -27,16 +30,12 @@ fn main() {
         .expect("Failed to request airdrop");
 
     // Wait for airdrop confirmation
-    loop {
-        if client
-            .confirm_transaction(&airdrop_signature)
-            .unwrap_or(false)
-        {
-            break;
-        }
+    while !client
+        .confirm_transaction(&airdrop_signature)
+        .unwrap_or(false)
+    {
         std::thread::sleep(std::time::Duration::from_millis(500));
     }
-
     println!("Airdrop confirmed");
 
     // Create the instruction
@@ -50,37 +49,32 @@ fn main() {
     let mut tx = Transaction::new_with_payer(&[ix], Some(&payer.pubkey()));
     tx.sign(&[&payer], client.get_latest_blockhash().unwrap());
 
-    match client.send_and_confirm_transaction(&tx) {
-        Ok(sig) => {
-            println!("Transaction Signature: {}", sig);
+    let sig = client.send_and_confirm_transaction(&tx).unwrap();
 
-            // Fetch transaction details with logs
-            let tx_info = client
-                .get_transaction_with_config(
-                    &sig,
-                    RpcTransactionConfig {
-                        encoding: Some(
-                            solana_transaction_status_client_types::UiTransactionEncoding::Json,
-                        ),
-                        commitment: Some(CommitmentConfig::confirmed()),
-                        max_supported_transaction_version: Some(0),
-                    },
-                )
-                .expect("Failed to get transaction info");
+    println!("Transaction signature: {}", sig);
 
-            if let Some(meta) = tx_info.transaction.meta {
-                if let solana_transaction_status_client_types::option_serializer::OptionSerializer::Some(logs) = meta.log_messages {
-                    println!("--- Transaction Logs ---");
-                    for log in logs.iter() {
-                        println!("{}", log);
-                    }
-                } else {
-                    println!("No logs available for this transaction.");
-                }
-            } else {
-                println!("Transaction metadata not found.");
+    // Fetch transaction details with logs
+    let tx_info = client
+        .get_transaction_with_config(
+            &sig,
+            RpcTransactionConfig {
+                encoding: Some(UiTransactionEncoding::Json),
+                commitment: Some(CommitmentConfig::confirmed()),
+                max_supported_transaction_version: Some(0),
+            },
+        )
+        .expect("Failed to get transaction info");
+
+    if let Some(meta) = tx_info.transaction.meta {
+        if let OptionSerializer::Some(logs) = meta.log_messages {
+            println!("--- Transaction Logs ---");
+            for log in logs.iter() {
+                println!("{}", log);
             }
+        } else {
+            println!("No logs");
         }
-        Err(err) => eprintln!("Error sending transaction: {}", err),
+    } else {
+        println!("Transaction metadata not found");
     }
 }
