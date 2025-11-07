@@ -39,7 +39,7 @@
 - CPI (cross program invocation)
 
 # Hello
-- Native
+- [ ] Native
     - Borsh
     - `entrypoint`
     - `msg`
@@ -53,7 +53,7 @@
     - Deploy
         - [Solana explorer](https://explorer.solana.com/)
     - Exercises
-- Anchor
+- [ ] Anchor
 
 # Oracle
 - Native
