@@ -52,7 +52,6 @@
     - Build, test, deploy
     - `cargo build-sbf`
     - Test
-        - TODO: mollusk
         - Script
             - `solana-test-calidator`
             - `.so`
