@@ -26,7 +26,7 @@ pub fn unlock(
         return Err(ProgramError::InvalidSeeds);
     }
 
-    // Load and validate lock state
+    // Load lock state
     let (lock_dst, lock_exp) = {
         let data = pda.data.borrow();
         let lock = Lock::try_from_slice(&data)?;
