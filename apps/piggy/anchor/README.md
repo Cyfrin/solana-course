@@ -9,7 +9,7 @@ Complete all tasks below
 anchor keys sync
 ```
 
-# Task 1 - Implement [`lock`](https://github.com/Cyfrin/solana-course/blob/main/apps/piggy/anchor/exercise/programs/piggy/src/lib.rs#L18)
+# Task 1 - Implement [`lock`](https://github.com/Cyfrin/solana-course/blob/main/apps/piggy/anchor/exercise/programs/piggy/src/lib.rs)
 
 - Require `amt` > 0
 ```shell
@@ -47,7 +47,7 @@ anchor_lang::solana_program::program::invoke(
 ```
 - Call `instructions::lock` inside `lib.rs`
 
-# Task 2 - Implement [`unlock`](https://github.com/Cyfrin/solana-course/blob/main/apps/piggy/anchor/exercise/programs/piggy/src/lib.rs#L18)
+# Task 2 - Implement [`unlock`](https://github.com/Cyfrin/solana-course/blob/main/apps/piggy/anchor/exercise/programs/piggy/src/lib.rs)
 - Check expiration
 ```shell
 require!(
