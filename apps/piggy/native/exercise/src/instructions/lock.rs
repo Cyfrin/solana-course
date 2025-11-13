@@ -15,15 +15,17 @@ use crate::state::Lock;
 pub fn lock(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
-    dst: Pubkey,
     amt: u64,
     exp: u64,
     bump: u8,
 ) -> Result<(), ProgramError> {
     let account_iter = &mut accounts.iter();
     let payer = next_account_info(account_iter)?;
+    let dst = next_account_info(account_iter)?;
     let pda = next_account_info(account_iter)?;
     let sys_program = next_account_info(account_iter)?;
+
+    // Check dst signed, verifies dst exists and approved to later receive SOL
 
     // Check that the given account key matches expected PDA
 

@@ -41,6 +41,11 @@ fn test() {
                 is_writable: true,
             },
             AccountMeta {
+                pubkey: dst.pubkey(),
+                is_signer: true,
+                is_writable: true,
+            },
+            AccountMeta {
                 pubkey: pda,
                 is_signer: false,
                 is_writable: true,
@@ -51,19 +56,13 @@ fn test() {
                 is_writable: true,
             },
         ],
-        data: borsh::to_vec(&Cmd::Lock {
-            dst: dst.pubkey(),
-            amt,
-            exp,
-            bump,
-        })
-        .unwrap(),
+        data: borsh::to_vec(&Cmd::Lock { amt, exp, bump }).unwrap(),
     };
 
     svm.send_transaction(Transaction::new_signed_with_payer(
         &[ix],
         Some(&payer.pubkey()),
-        &[&payer],
+        &[&payer, &dst],
         svm.latest_blockhash(),
     ))
     .unwrap();
@@ -84,12 +83,12 @@ fn test() {
                 is_writable: true,
             },
             AccountMeta {
-                pubkey: pda,
+                pubkey: dst.pubkey(),
                 is_signer: false,
                 is_writable: true,
             },
             AccountMeta {
-                pubkey: dst.pubkey(),
+                pubkey: pda,
                 is_signer: false,
                 is_writable: true,
             },

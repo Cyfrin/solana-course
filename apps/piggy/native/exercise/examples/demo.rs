@@ -18,18 +18,13 @@ use piggy::state::Lock;
 fn create_lock_ix(
     program_id: Pubkey,
     payer: Pubkey,
-    pda: Pubkey,
     dst: Pubkey,
+    pda: Pubkey,
     amt: u64,
     exp: u64,
     bump: u8,
 ) -> Instruction {
-    let cmd = Cmd::Lock {
-        dst,
-        amt,
-        exp,
-        bump,
-    };
+    let cmd = Cmd::Lock { amt, exp, bump };
 
     Instruction::new_with_borsh(
         program_id,
@@ -37,6 +32,11 @@ fn create_lock_ix(
         vec![
             AccountMeta {
                 pubkey: payer,
+                is_signer: true,
+                is_writable: true,
+            },
+            AccountMeta {
+                pubkey: dst,
                 is_signer: true,
                 is_writable: true,
             },
@@ -73,12 +73,12 @@ fn create_unlock_ix(
                 is_writable: true,
             },
             AccountMeta {
-                pubkey: pda,
+                pubkey: dst,
                 is_signer: false,
                 is_writable: true,
             },
             AccountMeta {
-                pubkey: dst,
+                pubkey: pda,
                 is_signer: false,
                 is_writable: true,
             },
@@ -177,15 +177,15 @@ fn main() {
     let ix = create_lock_ix(
         program_id,
         payer.pubkey(),
-        pda,
         dst.pubkey(),
+        pda,
         amt,
         exp,
         if bump == 0 { bump + 1 } else { 0 },
     );
 
     let mut tx = Transaction::new_with_payer(&[ix], Some(&payer.pubkey()));
-    tx.sign(&[&payer], client.get_latest_blockhash().unwrap());
+    tx.sign(&[&payer, &dst], client.get_latest_blockhash().unwrap());
 
     let res = client.send_and_confirm_transaction(&tx);
     assert!(res.is_err());
@@ -198,15 +198,15 @@ fn main() {
     let ix = create_lock_ix(
         program_id,
         payer.pubkey(),
-        pda,
         dst.pubkey(),
+        pda,
         amt,
         exp,
         bump,
     );
 
     let mut tx = Transaction::new_with_payer(&[ix], Some(&payer.pubkey()));
-    tx.sign(&[&payer], client.get_latest_blockhash().unwrap());
+    tx.sign(&[&payer, &dst], client.get_latest_blockhash().unwrap());
 
     let res = client.send_and_confirm_transaction(&tx);
     assert!(res.is_err());
@@ -219,20 +219,21 @@ fn main() {
     let ix = create_lock_ix(
         program_id,
         payer.pubkey(),
-        pda,
         dst.pubkey(),
+        pda,
         amt,
         exp,
         bump,
     );
 
     let mut tx = Transaction::new_with_payer(&[ix], Some(&payer.pubkey()));
-    tx.sign(&[&payer], client.get_latest_blockhash().unwrap());
+    tx.sign(&[&payer, &dst], client.get_latest_blockhash().unwrap());
 
     let res = client.send_and_confirm_transaction(&tx);
     assert!(res.is_err());
 
     // Lock
+    let now = client.get_block_time(client.get_slot().unwrap()).unwrap() as u64;
     let amt = 1e9 as u64;
     let dt = 1;
     let exp = now + dt;
@@ -240,15 +241,16 @@ fn main() {
     let ix = create_lock_ix(
         program_id,
         payer.pubkey(),
-        pda,
         dst.pubkey(),
+        pda,
         amt,
         exp,
         bump,
     );
 
-    let mut tx = Transaction::new_with_payer(&[ix], Some(&payer.pubkey()));
-    tx.sign(&[&payer], client.get_latest_blockhash().unwrap());
+    let mut tx =
+        Transaction::new_with_payer(&[ix.clone()], Some(&payer.pubkey()));
+    tx.sign(&[&payer, &dst], client.get_latest_blockhash().unwrap());
 
     let res = client.send_and_confirm_transaction(&tx);
 
@@ -272,6 +274,9 @@ fn main() {
     assert!(client.get_balance(&pda).unwrap() >= amt);
 
     // Cannot re-lock
+    let mut tx = Transaction::new_with_payer(&[ix], Some(&payer.pubkey()));
+    tx.sign(&[&payer, &dst], client.get_latest_blockhash().unwrap());
+
     let res = client.send_and_confirm_transaction(&tx);
     assert!(res.is_err());
 

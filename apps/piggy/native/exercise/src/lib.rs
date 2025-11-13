@@ -10,8 +10,6 @@ pub mod state;
 #[derive(BorshDeserialize, BorshSerialize)]
 pub enum Cmd {
     Lock {
-        // Destination that will receive SOL after lock expiry
-        dst: Pubkey,
         // Amount of SOL to lock
         amt: u64,
         // Lock expiration timestamp
@@ -34,12 +32,7 @@ pub fn process_instruction(
     let ix = Cmd::try_from_slice(instruction_data)?;
 
     match ix {
-        Cmd::Lock {
-            dst,
-            amt,
-            exp,
-            bump,
-        } => {
+        Cmd::Lock { amt, exp, bump } => {
             // Write your code here
         }
         Cmd::Unlock { bump } => {
