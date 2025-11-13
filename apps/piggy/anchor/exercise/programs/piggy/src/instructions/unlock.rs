@@ -28,26 +28,10 @@ pub struct Unlock<'info> {
 
 pub fn unlock(ctx: Context<Unlock>) -> Result<()> {
     let clock = Clock::get()?;
-    let lock = &ctx.accounts.lock;
 
     // Check expiration
-    require!(
-        u64::try_from(clock.unix_timestamp).unwrap() >= lock.exp,
-        error::Error::LockNotExpired
-    );
 
     // Transfer all lamports to dst
-    let amt = ctx.accounts.lock.to_account_info().lamports();
-    **ctx
-        .accounts
-        .lock
-        .to_account_info()
-        .try_borrow_mut_lamports()? -= amt;
-    **ctx
-        .accounts
-        .dst
-        .to_account_info()
-        .try_borrow_mut_lamports()? += amt;
 
     Ok(())
 }

@@ -11,6 +11,13 @@ Complete all tasks below
 
 # Task 1 - Implement [`instructions::lock`](https://github.com/Cyfrin/solana-course/blob/main/apps/piggy/native/exercise/src/instructions/lock.rs)
 
+- Check dst signed, verifies dst exists and approved to later receive SOL
+```rust
+if !dst.is_signer {
+    return Err(ProgramError::MissingRequiredSignature);
+}
+```
+
 - Check that the given account key matches expected PDA
 ```rust
 if *pda.key != get_pda(program_id, payer.key, &dst, bump)? {

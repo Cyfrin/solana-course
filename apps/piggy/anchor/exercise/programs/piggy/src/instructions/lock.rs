@@ -29,33 +29,12 @@ pub fn lock(ctx: Context<Lock>, amt: u64, exp: u64) -> Result<()> {
     let clock = Clock::get()?;
 
     // Require amt > 0
-    require!(amt > 0, error::Error::InvalidAmount);
 
     // Ensure expiration is in the future
-    require!(
-        exp > u64::try_from(clock.unix_timestamp).unwrap(),
-        error::Error::InvalidExpiration
-    );
 
     // Store lock state
-    let lock = &mut ctx.accounts.lock;
-    lock.dst = ctx.accounts.dst.key();
-    lock.exp = exp;
 
     // Transfer SOL from payer to PDA
-    let ix = anchor_lang::solana_program::system_instruction::transfer(
-        &ctx.accounts.payer.key(),
-        &ctx.accounts.lock.key(),
-        amt,
-    );
-    anchor_lang::solana_program::program::invoke(
-        &ix,
-        &[
-            ctx.accounts.payer.to_account_info(),
-            ctx.accounts.lock.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
-        ],
-    )?;
 
     Ok(())
 }
