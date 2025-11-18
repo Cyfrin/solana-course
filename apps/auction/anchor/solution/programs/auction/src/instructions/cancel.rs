@@ -16,33 +16,32 @@ pub struct Cancel<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
-    pub sell_mint: InterfaceAccount<'info, Mint>,
-    pub buy_mint: InterfaceAccount<'info, Mint>,
+    pub mint_sell: InterfaceAccount<'info, Mint>,
+    pub mint_buy: InterfaceAccount<'info, Mint>,
 
     #[account(
         mut,
         seeds = [
             state::Auction::SEED_PREFIX,
             payer.key().as_ref(),
-            sell_mint.key().as_ref(),
-            buy_mint.key().as_ref()
+            mint_sell.key().as_ref(),
+            mint_buy.key().as_ref()
         ],
         bump,
         close = payer,
-        constraint = auction.seller == payer.key() @ error::Error::Unauthorized
     )]
     pub auction: Account<'info, state::Auction>,
 
     #[account(
         mut,
-        associated_token::mint = sell_mint,
+        associated_token::mint = mint_sell,
         associated_token::authority = auction,
     )]
     pub auction_sell_ata: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
         mut,
-        associated_token::mint = sell_mint,
+        associated_token::mint = mint_sell,
         associated_token::authority = payer,
     )]
     pub seller_sell_ata: InterfaceAccount<'info, TokenAccount>,
@@ -57,8 +56,8 @@ pub fn cancel(ctx: Context<Cancel>) -> Result<()> {
     let seeds: &[&[u8]] = &[
         state::Auction::SEED_PREFIX,
         &ctx.accounts.payer.key().to_bytes(),
-        &ctx.accounts.sell_mint.key().to_bytes(),
-        &ctx.accounts.buy_mint.key().to_bytes(),
+        &ctx.accounts.mint_sell.key().to_bytes(),
+        &ctx.accounts.mint_buy.key().to_bytes(),
         &[ctx.bumps.auction],
     ];
 

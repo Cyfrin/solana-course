@@ -13,8 +13,6 @@ pub mod auction {
 
     pub fn init(
         ctx: Context<Init>,
-        sell_mint: Pubkey,
-        buy_mint: Pubkey,
         start_price: u64,
         end_price: u64,
         start_time: u64,
@@ -23,8 +21,6 @@ pub mod auction {
     ) -> Result<()> {
         instructions::init(
             ctx,
-            sell_mint,
-            buy_mint,
             start_price,
             end_price,
             start_time,

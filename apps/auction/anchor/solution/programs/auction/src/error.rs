@@ -12,8 +12,8 @@ pub enum Error {
     InvalidEndTime,
     #[msg("Sell amount must be > 0")]
     InvalidSellAmount,
-    #[msg("Unauthorized")]
-    Unauthorized,
+    #[msg("Auction not started")]
+    AuctionNotStarted,
     #[msg("Auction ended")]
     AuctionEnded,
     #[msg("Invalid current price")]
