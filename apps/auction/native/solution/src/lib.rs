@@ -20,8 +20,13 @@ pub enum Cmd {
     },
     Buy {
         max_price: u64,
+        // Auction PDA bump
+        bump: u8,
     },
-    Cancel,
+    Cancel {
+        // Auction PDA bump
+        bump: u8,
+    },
 }
 
 entrypoint!(process_instruction);
@@ -53,8 +58,8 @@ pub fn process_instruction(
                 bump,
             )?;
         }
-        Cmd::Buy { max_price } => {}
-        Cmd::Cancel => {}
+        Cmd::Buy { max_price, bump } => {}
+        Cmd::Cancel { bump } => {}
     }
 
     Ok(())
