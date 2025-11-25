@@ -6,7 +6,6 @@ use solana_sdk::{
     instruction::{AccountMeta, Instruction},
     pubkey::Pubkey,
     signature::{Keypair, Signer, read_keypair_file},
-    signer::keypair::keypair_from_seed,
     system_instruction,
     transaction::Transaction,
 };
@@ -17,7 +16,6 @@ use std::time::Duration;
 
 use auction::Cmd;
 use auction::state::Auction;
-use borsh::BorshDeserialize;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -121,7 +119,7 @@ fn main() {
 
     // Buy
     println!("Buy");
-    thread::sleep(std::time::Duration::from_millis(1500));
+    thread::sleep(Duration::from_millis(1500));
 
     let cmd = Cmd::Buy {
         max_price: start_price - 1,
@@ -407,7 +405,7 @@ fn airdrop(client: &RpcClient, pubkey: &Pubkey, lamports: u64) {
 
     // Wait for airdrop confirmation
     while !client.confirm_transaction(&sig).unwrap_or(false) {
-        thread::sleep(std::time::Duration::from_millis(500));
+        thread::sleep(Duration::from_millis(500));
     }
 }
 

@@ -22,4 +22,6 @@ solana-sdk = "2.3"
 solana-client = "2.3"
 solana-transaction-status-client-types = "2.3"
 solana-address = "2.0"
-
+litesvm-token = "0.7"
+spl-token-interface = "2.0.0"
+spl-associated-token-account-interface = "2.0.0"
