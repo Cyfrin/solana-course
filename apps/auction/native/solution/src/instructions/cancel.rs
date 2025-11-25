@@ -36,11 +36,11 @@ pub fn cancel(
     {
         return Err(ProgramError::InvalidSeeds);
     }
-    // Check that auction_sell_ata matches calculated matches
+    // Check that auction_sell_ata matches calculated account
     if *auction_sell_ata.key != get_ata(auction_pda.key, mint_sell.key) {
         return Err(ProgramError::InvalidArgument);
     }
-    // Check that buyer_sell_ata matches calculated matches
+    // Check that buyer_sell_ata matches calculated account
     if *seller_sell_ata.key != get_ata(seller.key, mint_sell.key) {
         return Err(ProgramError::InvalidArgument);
     }

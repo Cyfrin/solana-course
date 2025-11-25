@@ -5,7 +5,7 @@ SOL is kept in this PDA until expiry.
 After expiry, SOL can be sent to a destinated account.
 
 Complete all tasks below
-- Implement then piggy bank program
+- Implement the piggy bank program
 - Test locally with LiteSVM
 - Deploy locally to `solana-test-validator` and test with Rust script
 

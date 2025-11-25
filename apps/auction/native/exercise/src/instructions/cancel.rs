@@ -28,8 +28,8 @@ pub fn cancel(
 
     // Check seller signed
     // Check that auction_pda matches expected PDA
-    // Check that auction_sell_ata matches calculated matches
-    // Check that buyer_sell_ata matches calculated matches
+    // Check that auction_sell_ata matches calculated account
+    // Check that buyer_sell_ata matches calculated account
 
     // Get sell amount locked in auction_sell_ata
 

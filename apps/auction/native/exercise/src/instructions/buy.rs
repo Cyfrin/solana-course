@@ -34,10 +34,10 @@ pub fn buy(
 
     // Check buyer signed
     // Check that auction_pda matches expected PDA
-    // Check that auction_sell_ata matches calculated matches
-    // Check that buyer_sell_ata matches calculated matches
-    // Check that buyer_buy_ata matches calculated matches
-    // Check that seller_buy_ata matches calculated matches
+    // Check that auction_sell_ata matches calculated account
+    // Check that buyer_sell_ata matches calculated account
+    // Check that buyer_buy_ata matches calculated account
+    // Check that seller_buy_ata matches calculated account
 
     let clock = Clock::get()?;
     let now: u64 = clock.unix_timestamp.try_into().unwrap();
