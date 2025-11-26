@@ -116,7 +116,7 @@ pub fn remove_liquidity(
         &[pool_bump],
     ];
 
-    // Transfer amount_a from pool to payer_b (user's associated token account for token b)
+    // Transfer amount_b from pool to payer_b (user's associated token account for token b)
 
     Ok(())
 }

@@ -146,7 +146,7 @@ pub fn remove_liquidity(
         )?;
     }
 
-    // Transfer amount_a from pool to payer_b (user's associated token account for token b)
+    // Transfer amount_b from pool to payer_b (user's associated token account for token b)
     if amount_b > 0 {
         lib::transfer_from_pool(
             &ctx.accounts.token_program,
