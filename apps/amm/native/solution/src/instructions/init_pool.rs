@@ -16,7 +16,7 @@ use super::lib;
 use crate::constants;
 use crate::state::Pool;
 
-pub fn init(
+pub fn init_pool(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     fee: u16,

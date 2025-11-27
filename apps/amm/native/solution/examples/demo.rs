@@ -14,8 +14,8 @@ use std::str::FromStr;
 use std::thread;
 use std::time::Duration;
 
-use auction::Cmd;
-use auction::state::Auction;
+// use auction::Cmd;
+// use auction::state::Auction;
 
 fn main() {}
 

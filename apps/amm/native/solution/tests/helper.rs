@@ -11,8 +11,7 @@ use solana_sdk::{
 };
 use spl_associated_token_account_interface::address::get_associated_token_address;
 
-/*
-use auction::{Cmd, state::Auction};
+use amm::{Cmd, state::Pool};
 
 pub fn create_mint(svm: &mut LiteSVM, payer: &Keypair) -> Pubkey {
     CreateMint::new(svm, payer)
@@ -60,28 +59,23 @@ pub fn get_token_balance(svm: &LiteSVM, account: &Pubkey) -> u64 {
     token_account.amount
 }
 
-pub fn create_init_ix(
+pub fn create_init_pool_ix(
     program_id: Pubkey,
-    start_price: u64,
-    end_price: u64,
-    start_time: u64,
-    end_time: u64,
-    sell_amt: u64,
-    bump: u8,
-    seller: Pubkey,
-    mint_sell: Pubkey,
-    mint_buy: Pubkey,
-    auction_pda: Pubkey,
-    auction_sell_ata: Pubkey,
-    seller_sell_ata: Pubkey,
+    payer: Pubkey,
+    fee: u16,
+    mint_a: Pubkey,
+    mint_b: Pubkey,
+    pool: Pubkey,
+    pool_bump: u8,
+    mint_pool: Pubkey,
+    mint_pool_bump: u8,
+    pool_a: Pubkey,
+    pool_b: Pubkey,
 ) -> Instruction {
-    let cmd = Cmd::Init {
-        start_price,
-        end_price,
-        start_time,
-        end_time,
-        sell_amt,
-        bump,
+    let cmd = Cmd::InitPool {
+        fee,
+        pool_bump,
+        mint_pool_bump,
     };
 
     Instruction::new_with_borsh(
@@ -89,32 +83,37 @@ pub fn create_init_ix(
         &cmd,
         vec![
             AccountMeta {
-                pubkey: seller,
+                pubkey: payer,
                 is_signer: true,
                 is_writable: true,
             },
             AccountMeta {
-                pubkey: mint_sell,
+                pubkey: pool,
                 is_signer: false,
                 is_writable: true,
             },
             AccountMeta {
-                pubkey: mint_buy,
+                pubkey: mint_a,
                 is_signer: false,
                 is_writable: true,
             },
             AccountMeta {
-                pubkey: auction_pda,
+                pubkey: mint_b,
                 is_signer: false,
                 is_writable: true,
             },
             AccountMeta {
-                pubkey: auction_sell_ata,
+                pubkey: pool_a,
                 is_signer: false,
                 is_writable: true,
             },
             AccountMeta {
-                pubkey: seller_sell_ata,
+                pubkey: pool_b,
+                is_signer: false,
+                is_writable: true,
+            },
+            AccountMeta {
+                pubkey: mint_pool,
                 is_signer: false,
                 is_writable: true,
             },
@@ -144,6 +143,7 @@ pub fn create_init_ix(
         ],
     )
 }
+/*
 
 pub fn create_buy_ix(
     program_id: Pubkey,
@@ -283,80 +283,101 @@ pub fn create_cancel_ix(
         ],
     )
 }
+*/
 
+#[derive(Debug)]
 pub struct Test {
     pub program_id: Pubkey,
     pub payer: Keypair,
-    pub seller: Keypair,
-    pub buyer: Keypair,
-    pub mint_sell: Pubkey,
-    pub mint_buy: Pubkey,
-    pub seller_sell_ata: Pubkey,
-    pub seller_buy_ata: Pubkey,
-    pub buyer_sell_ata: Pubkey,
-    pub buyer_buy_ata: Pubkey,
-    pub auction_pda: Pubkey,
-    pub auction_bump: u8,
-    pub auction_sell_ata: Pubkey,
+    pub users: Vec<Keypair>,
+    pub mint_a: Pubkey,
+    pub mint_b: Pubkey,
+    pub atas_a: Vec<Pubkey>,
+    pub atas_b: Vec<Pubkey>,
+    pub fee: u16,
+    pub pool_pda: Pubkey,
+    pub pool_bump: u8,
+    pub mint_pool_pda: Pubkey,
+    pub mint_pool_bump: u8,
+    pub pool_a: Pubkey,
+    pub pool_b: Pubkey,
 }
 
 pub fn setup(svm: &mut LiteSVM) -> Test {
     let payer = Keypair::new();
-    let seller = Keypair::new();
-    let buyer = Keypair::new();
+
     let program_keypair = Keypair::new();
     let program_id = program_keypair.pubkey();
-    svm.add_program_from_file(program_id, "target/deploy/auction.so")
+    svm.add_program_from_file(program_id, "target/deploy/amm.so")
         .unwrap();
+
+    let mut users = Vec::new();
+    users.push(Keypair::new());
+    users.push(Keypair::new());
 
     // Airdrop
     svm.airdrop(&payer.pubkey(), 1_000_000_000).unwrap();
-    svm.airdrop(&seller.pubkey(), 1_000_000_000).unwrap();
-    svm.airdrop(&buyer.pubkey(), 1_000_000_000).unwrap();
+    for user in users.iter() {
+        svm.airdrop(&user.pubkey(), 1_000_000_000).unwrap();
+    }
 
     // Mints
-    let mint_sell = create_mint(svm, &payer);
-    let mint_buy = create_mint(svm, &payer);
+    let mint_a = create_mint(svm, &payer);
+    let mint_b = create_mint(svm, &payer);
 
-    // Auction PDA
-    let (auction_pda, auction_bump) = Pubkey::find_program_address(
+    // Pool PDA
+    let fee: u16 = 500;
+    let (pool_pda, pool_bump) = Pubkey::find_program_address(
         &[
-            Auction::SEED_PREFIX,
-            seller.pubkey().as_ref(),
-            mint_sell.as_ref(),
-            mint_buy.as_ref(),
+            amm::constants::POOL_AUTH,
+            mint_a.as_ref(),
+            mint_b.as_ref(),
+            fee.to_le_bytes().as_ref(),
+        ],
+        &program_id,
+    );
+
+    let (mint_pool_pda, mint_pool_bump) = Pubkey::find_program_address(
+        &[
+            amm::constants::POOL_MINT,
+            mint_a.as_ref(),
+            mint_b.as_ref(),
+            fee.to_le_bytes().as_ref(),
         ],
         &program_id,
     );
 
     // ATA
-    let seller_sell_ata = create_ata(svm, &payer, &seller.pubkey(), &mint_sell);
-    let seller_buy_ata = create_ata(svm, &payer, &seller.pubkey(), &mint_buy);
-    let buyer_sell_ata = create_ata(svm, &payer, &buyer.pubkey(), &mint_sell);
-    let buyer_buy_ata = create_ata(svm, &payer, &buyer.pubkey(), &mint_buy);
-    let auction_sell_ata = get_ata(&mint_sell, &auction_pda);
+    let mut atas_a = Vec::new();
+    let mut atas_b = Vec::new();
+    for user in users.iter() {
+        let ata_a = create_ata(svm, &payer, &user.pubkey(), &mint_a);
+        atas_a.push(ata_a);
 
-    // Mint to
-    mint_to(svm, &payer, &mint_sell, &seller_sell_ata, 1e9 as u64);
-    mint_to(svm, &payer, &mint_buy, &buyer_buy_ata, 1e9 as u64);
+        let ata_b = create_ata(svm, &payer, &user.pubkey(), &mint_b);
+        atas_b.push(ata_b);
+
+        mint_to(svm, &payer, &mint_a, &ata_a, 1e9 as u64);
+        mint_to(svm, &payer, &mint_b, &ata_b, 1e9 as u64);
+    }
+
+    let pool_a = get_ata(&mint_a, &pool_pda);
+    let pool_b = get_ata(&mint_b, &pool_pda);
 
     Test {
         program_id,
         payer,
-        seller,
-        buyer,
-        mint_sell,
-        mint_buy,
-        seller_sell_ata,
-        seller_buy_ata,
-        buyer_sell_ata,
-        buyer_buy_ata,
-        auction_pda,
-        auction_bump,
-        auction_sell_ata,
+        users,
+        mint_a,
+        mint_b,
+        atas_a,
+        atas_b,
+        fee,
+        pool_pda,
+        pool_bump,
+        mint_pool_pda,
+        mint_pool_bump,
+        pool_a,
+        pool_b,
     }
-
-
-
 }
-*/

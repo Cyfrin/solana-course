@@ -10,7 +10,7 @@ pub mod state;
 
 #[derive(BorshDeserialize, BorshSerialize)]
 pub enum Cmd {
-    Init {
+    InitPool {
         fee: u16,
         pool_bump: u8,
         mint_pool_bump: u8,
@@ -49,12 +49,12 @@ pub fn process_instruction(
     let ix = Cmd::try_from_slice(instruction_data)?;
 
     match ix {
-        Cmd::Init {
+        Cmd::InitPool {
             fee,
             pool_bump,
             mint_pool_bump,
         } => {
-            instructions::init(
+            instructions::init_pool(
                 program_id,
                 accounts,
                 fee,
