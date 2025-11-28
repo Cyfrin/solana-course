@@ -27,8 +27,8 @@ pub fn swap(
     let mint_b = next_account_info(accounts_iter)?;
     let pool_a = next_account_info(accounts_iter)?;
     let pool_b = next_account_info(accounts_iter)?;
-    let payer_account_a = next_account_info(accounts_iter)?;
-    let payer_account_b = next_account_info(accounts_iter)?;
+    let payer_a = next_account_info(accounts_iter)?;
+    let payer_b = next_account_info(accounts_iter)?;
     let token_program = next_account_info(accounts_iter)?;
 
     // Verify payer is signer
@@ -68,23 +68,9 @@ pub fn swap(
     // Determine swap direction
     let (mint_in, mint_out, pool_in, pool_out, payer_in, payer_out) = if a_for_b
     {
-        (
-            mint_a,
-            mint_b,
-            pool_a,
-            pool_b,
-            payer_account_a,
-            payer_account_b,
-        )
+        (mint_a, mint_b, pool_a, pool_b, payer_a, payer_b)
     } else {
-        (
-            mint_b,
-            mint_a,
-            pool_b,
-            pool_a,
-            payer_account_b,
-            payer_account_a,
-        )
+        (mint_b, mint_a, pool_b, pool_a, payer_b, payer_a)
     };
 
     // Transfer token from payer to pool

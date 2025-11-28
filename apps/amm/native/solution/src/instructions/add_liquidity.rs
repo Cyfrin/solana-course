@@ -30,9 +30,9 @@ pub fn add_liquidity(
     let pool_a = next_account_info(accounts_iter)?;
     let pool_b = next_account_info(accounts_iter)?;
     let mint_pool = next_account_info(accounts_iter)?;
-    let payer_account_a = next_account_info(accounts_iter)?;
-    let payer_account_b = next_account_info(accounts_iter)?;
-    let payer_account_liquidity = next_account_info(accounts_iter)?;
+    let payer_a = next_account_info(accounts_iter)?;
+    let payer_b = next_account_info(accounts_iter)?;
+    let payer_liq = next_account_info(accounts_iter)?;
     let token_program = next_account_info(accounts_iter)?;
     let ata_program = next_account_info(accounts_iter)?;
     let sys_program = next_account_info(accounts_iter)?;
@@ -109,13 +109,13 @@ pub fn add_liquidity(
         user_liquidity
     };
 
-    // Initialize payer_account_liquidity (associated token account for mint_pool owned by payer) if not initialized.
-    if payer_account_liquidity.lamports() == 0 {
+    // Initialize payer_liq (associated token account for mint_pool owned by payer) if not initialized.
+    if payer_liq.lamports() == 0 {
         lib::create_ata(
             payer,
             mint_pool,
             payer,
-            payer_account_liquidity,
+            payer_liq,
             token_program,
             sys_program,
             ata_program,
@@ -125,12 +125,12 @@ pub fn add_liquidity(
 
     // Transfer mint_a from payer to pool_a
     if amount_a > 0 {
-        lib::transfer(token_program, payer_account_a, pool_a, payer, amount_a)?;
+        lib::transfer(token_program, payer_a, pool_a, payer, amount_a)?;
     }
 
     // Transfer mint_b from payer to pool_b
     if amount_b > 0 {
-        lib::transfer(token_program, payer_account_b, pool_b, payer, amount_b)?;
+        lib::transfer(token_program, payer_b, pool_b, payer, amount_b)?;
     }
 
     // Mint LP tokens to payer
@@ -143,14 +143,7 @@ pub fn add_liquidity(
             &[pool_bump],
         ];
 
-        lib::mint_to(
-            token_program,
-            mint_pool,
-            payer_account_liquidity,
-            pool,
-            shares,
-            seeds,
-        )?;
+        lib::mint_to(token_program, mint_pool, payer_liq, pool, shares, seeds)?;
     }
 
     Ok(())

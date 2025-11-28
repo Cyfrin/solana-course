@@ -31,9 +31,9 @@ pub fn remove_liquidity(
     let pool_a = next_account_info(accounts_iter)?;
     let pool_b = next_account_info(accounts_iter)?;
     let mint_pool = next_account_info(accounts_iter)?;
-    let payer_account_a = next_account_info(accounts_iter)?;
-    let payer_account_b = next_account_info(accounts_iter)?;
-    let payer_account_liquidity = next_account_info(accounts_iter)?;
+    let payer_a = next_account_info(accounts_iter)?;
+    let payer_b = next_account_info(accounts_iter)?;
+    let payer_liq = next_account_info(accounts_iter)?;
     let token_program = next_account_info(accounts_iter)?;
 
     // Verify payer is signer
@@ -108,13 +108,7 @@ pub fn remove_liquidity(
     assert!(amount_b >= min_amount_b, "amount_b < min");
 
     // Burn LP tokens from payer
-    lib::burn(
-        token_program,
-        mint_pool,
-        payer_account_liquidity,
-        payer,
-        shares,
-    )?;
+    lib::burn(token_program, mint_pool, payer_liq, payer, shares)?;
 
     // Transfer token A from pool to payer
     let seeds = &[
@@ -129,7 +123,7 @@ pub fn remove_liquidity(
         lib::transfer_from_pool(
             token_program,
             pool_a,
-            payer_account_a,
+            payer_a,
             pool,
             amount_a,
             seeds,
@@ -141,7 +135,7 @@ pub fn remove_liquidity(
         lib::transfer_from_pool(
             token_program,
             pool_b,
-            payer_account_b,
+            payer_b,
             pool,
             amount_b,
             seeds,
