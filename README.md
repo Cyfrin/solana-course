@@ -112,15 +112,17 @@
 
 # AMM
 - [ ] [Anchor](./apps/amm/anchor)
-- compile counter
-- `Factory counter; Signer<info>`
-// In project root, copy IDL files to idls
-//  cp target/idl/*.json ./idls/
-- `Anchor.toml`
-- tests/Cargo.toml (`no-entrypoint`)
 - [ ] [Native](./apps/amm/native)
 
-# TODO: CPI and IDL?
+# CPI and IDL
+- [ ] [Anchor](./apps/cpi/anchor)
+    - compile counter
+    - `Factory counter; Signer<info>`
+    // In project root, copy IDL files to idls
+    //  cp target/idl/*.json ./idls/
+    - `Anchor.toml`
+    - tests/Cargo.toml (`no-entrypoint`)
+- [ ] [Native](./apps/cpi/native)
 
 # Wormhole
 
