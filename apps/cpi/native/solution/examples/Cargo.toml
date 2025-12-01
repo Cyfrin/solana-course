@@ -1,0 +1,18 @@
+[package]
+name = "demo"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "demo"
+path = "src/main.rs"
+
+[dependencies]
+borsh = "1.5"
+solana-program = "2.2"
+solana-sdk = "2.3"
+solana-client = "2.3"
+solana-program-pack = "3.0"
+solana-address = "2.0"
+counter = { path = "../programs/counter" }
+factory = { path = "../programs/factory" }
