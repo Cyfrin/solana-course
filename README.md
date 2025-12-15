@@ -29,14 +29,12 @@ TODO: clean up
         - Anchor tests in Rust are unreliable
 
 # Core concepts
-- [ ] [Solana vs Ethereum](./notes/eth-sol.png)
-- [ ] [Accounts](./notes/account.png)
-- [ ] [Programs, instructions and transactions](./notes/program.png)
-- [ ] [PDA](./notes/pda.png)
-- [ ] [CPI](https://solana.com/docs/core/cpi)
-    - permissions
-    - 4 depth
-- [ ] [IDL](https://solana.com/developers/guides/advanced/idls)
+- [x] [Solana vs Ethereum](./notes/eth-sol.png)
+- [x] [Accounts](./notes/account.png)
+- [x] [Programs, instructions and transactions](./notes/program.png)
+- [x] [PDA](./notes/pda.png)
+- [x] [CPI](https://solana.com/docs/core/cpi)
+- [x] [IDL](https://solana.com/developers/guides/advanced/idls)
 
 # Hello
 - [ ] [Native](./apps/hello/native)
