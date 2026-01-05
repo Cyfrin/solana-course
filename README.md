@@ -81,3 +81,4 @@ Please refer to this for an in-depth explanation of the content:
 - [crates.io](https://crates.io/)
 - [Solana playground](https://beta.solpg.io/)
 - [Advanced Solana Vulnerabilities w/ r0bre](https://www.youtube.com/watch?v=sStIk5YyWdc)
+- [solana-program 3.0.0 causing issues with edition 2024](https://github.com/anza-xyz/solana-sdk/issues/385)
