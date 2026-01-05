@@ -17,9 +17,6 @@ pub fn update(
     let mut data = oracle_account.data.borrow_mut();
     let mut oracle = Oracle::try_from_slice(&data)?;
 
-    // Missing signer check on signer
-    // Caller can update price without oracle.owner's authorization
-
     if oracle.owner != *signer.key {
         return Err(ProgramError::IllegalOwner);
     }
