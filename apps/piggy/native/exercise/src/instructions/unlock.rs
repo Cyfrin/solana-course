@@ -17,8 +17,8 @@ pub fn unlock(
 ) -> Result<(), ProgramError> {
     let account_iter = &mut accounts.iter();
     let payer = next_account_info(account_iter)?;
-    let pda = next_account_info(account_iter)?;
     let dst = next_account_info(account_iter)?;
+    let pda = next_account_info(account_iter)?;
     let sys_program = next_account_info(account_iter)?;
 
     // Check that the given account key matches expected PDA
