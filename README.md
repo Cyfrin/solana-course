@@ -25,6 +25,7 @@ Please refer to this for an in-depth explanation of the content:
 
 - [Course intro](./notes/course_intro.md)
 - [Setup](./notes/course_setup.md)
+- [Troubleshooting](./notes/troubleshooting.md) - Common issues and solutions
 
 # Core concepts
 - [Solana vs Ethereum](./notes/eth-sol.png)
